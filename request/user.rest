@@ -1,0 +1,74 @@
+### GET USERS
+GET http://localhost:8080/users
+### GET USERS
+GET http://localhost:8080/users?page=1&limit=2&name=Univ
+
+
+### GET USER
+GET http://localhost:8080/users/2
+
+### CREATE USER MAHASISWA
+POST http://localhost:8080/users
+content-type: application/json
+
+{
+    "name": "firman",
+    "email": "firman@mail.com",
+    "userType":"mahasiswa",
+
+    "semester": 3,
+    "nim": "19291",
+    "statusMahasiswa": "aktif",
+    "idUserUniversitas": 6,
+    "universitas": "Universitas utama"
+}
+
+### CREATE USER ORGANISASI
+POST http://localhost:8080/users
+content-type: application/json
+
+{
+    "name": "BEM test",
+    "email": "BEMtest@mail.com",
+    "userType":"organisasi",
+     
+    "idUserUniversitas": 6,
+    "universitas": "Universitas utama"
+}
+
+### CREATE USER UNIVERSITAS
+POST http://localhost:8080/users
+content-type: application/json
+
+{
+    "name": "Universitas utama",
+    "email": "universitautama@mail.com",
+    "password": "1234",
+    "userType":"universitas",
+
+    "namaRektor" :"Pak jojo",
+	"ktpRektor"  :"lorem.png",
+	"isVerified" :true,
+	"alamat"     :"Kebumen"
+     
+}
+
+### SIGN UP
+POST http://localhost:8080/users
+content-type: application/json
+
+{
+}
+
+### UPDATE USER
+PUT http://localhost:8080/users
+content-type: application/json
+
+{
+     
+}
+
+### DELETE USER
+DELETE http://localhost:8080/users/8
+### DELETE USERS
+DELETE http://localhost:8080/users
