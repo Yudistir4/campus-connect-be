@@ -10,9 +10,10 @@ type Mahasiswa struct {
 	IdUserUniversitas int
 	Universitas       string
 
-	// User              User `gorm:"foreignKey:IdUserUniversitas"`
-	// idUserUniversitas: "foreignKey",
-	// IdProdi: "foreignKey",
-	// idFakultas: "foreignKey",
-	// idJabatan: "foreignKey",
+	IdFakultas int
+	Fakultas   Fakultas `gorm:"foreignKey:IdFakultas"`
+	IdProdi    int
+	Prodi      Prodi `gorm:"foreignKey:IdProdi"`
+	IdJabatan  int
+	Jabatan    Jabatan `gorm:"foreignKey:IdJabatan"`
 }

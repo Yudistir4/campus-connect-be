@@ -18,4 +18,7 @@ func ConnectDatabase() {
 	DB.AutoMigrate(&Mahasiswa{})
 	DB.AutoMigrate(&Organisasi{})
 	DB.AutoMigrate(&Universitas{})
+	DB.AutoMigrate(&Fakultas{})
+	DB.AutoMigrate(&Prodi{})
+	DB.AutoMigrate(&Jabatan{})
 }

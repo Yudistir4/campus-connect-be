@@ -1,0 +1,37 @@
+### GET PRODIS
+GET http://localhost:8080/prodi
+
+### GET PRODIS (namaProdi,idUserUniversitas)
+GET http://localhost:8080/prodi?page=1&limit=10&idUserUniversitas=1&namaProdi=info
+
+### GET PRODIS (idUserUniversitas)
+GET http://localhost:8080/prodi?page=1&limit=10&idUserUniversitas=1
+
+
+### GET PRODI
+GET http://localhost:8080/prodi/1
+
+### CREATE PRODI MAHASISWA
+POST http://localhost:8080/prodi
+content-type: application/json
+
+{
+    "namaProdi": "Teknik Informatika",
+    "idUserUniversitas": 1,
+    "idFakultas": 1
+}
+
+ 
+
+### UPDATE PRODI
+PUT http://localhost:8080/prodi/id
+content-type: application/json
+
+{
+     
+}
+
+### DELETE PRODI
+DELETE http://localhost:8080/prodi/2
+### DELETE PRODIS
+DELETE http://localhost:8080/prodi

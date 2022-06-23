@@ -1,0 +1,36 @@
+### GET FAKULTASS
+GET http://localhost:8080/fakultas
+
+### GET FAKULTASS (name,idUserUniversitas)
+GET http://localhost:8080/fakultas?page=1&limit=10&idUserUniversitas=1&namaFakultas=k
+
+### GET FAKULTASS (idUserUniversitas)
+GET http://localhost:8080/fakultas?page=1&limit=2&idUserUniversitas=1&order=created_at desc
+
+
+### GET FAKULTAS
+GET http://localhost:8080/fakultas/2
+
+### CREATE FAKULTAS MAHASISWA
+POST http://localhost:8080/fakultas
+content-type: application/json
+
+{
+    "namaFakultas": "Ilmu Kesehatan",
+    "idUserUniversitas": 1
+}
+
+ 
+
+### UPDATE FAKULTAS
+PUT http://localhost:8080/fakultas/id
+content-type: application/json
+
+{
+     
+}
+
+### DELETE FAKULTAS
+DELETE http://localhost:8080/fakultas/2
+### DELETE FAKULTASS
+DELETE http://localhost:8080/fakultas

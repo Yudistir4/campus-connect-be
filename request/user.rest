@@ -1,26 +1,44 @@
 ### GET USERS
 GET http://localhost:8080/users
+### GET USERS (name,idUserUniversitas,userType)
+GET http://localhost:8080/users?page=1&limit=10&idUserUniversitas=1&userType=mahasiswa&name=mahasiswa1-1
+### GET USERS (idUserUniversitas,userType)
+GET http://localhost:8080/users?page=1&limit=1&idUserUniversitas=1&userType=mahasiswa
+
+
+### GET USERS (idUserOrganisasi,userType)
+GET http://localhost:8080/users?page=1&limit=1&idUserOrganisasi=3&userType=mahasiswa
+
+
+### GET USERS (name)
+GET http://localhost:8080/users?page=1&limit=2&name=maha
+### GET USERS (isVerified)
+GET http://localhost:8080/users?page=1&limit=10&userType=universitas&isVerified=true
 ### GET USERS
-GET http://localhost:8080/users?page=1&limit=2&name=Univ
+GET http://localhost:8080/users?page=1&limit=10&userType=universitas
 
 
 ### GET USER
-GET http://localhost:8080/users/2
+GET http://localhost:8080/users/13
 
 ### CREATE USER MAHASISWA
 POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "firman",
-    "email": "firman@mail.com",
+    "name": "mahasiswa2-1",
+    "email": "mahasiswa2-1@mail.com",
     "userType":"mahasiswa",
 
     "semester": 3,
-    "nim": "19291",
+    "nim": "mahasiswa2-1",
     "statusMahasiswa": "aktif",
-    "idUserUniversitas": 6,
-    "universitas": "Universitas utama"
+    "idUserUniversitas": 1,
+    "universitas": "Universitas1",
+    "idFakultas":1,
+    "idProdi":1
+
+    
 }
 
 ### CREATE USER ORGANISASI
@@ -28,12 +46,11 @@ POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "BEM test",
-    "email": "BEMtest@mail.com",
+    "name": "organisasi3-1",
+    "email": "organisasi3-1@mail.com",
     "userType":"organisasi",
-     
-    "idUserUniversitas": 6,
-    "universitas": "Universitas utama"
+    "idUserUniversitas": 1,
+    "universitas": "Universitas1"
 }
 
 ### CREATE USER UNIVERSITAS
@@ -41,15 +58,15 @@ POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "Universitas utama",
-    "email": "universitautama@mail.com",
+    "name": "Universitas3",
+    "email": "Universitas3@mail.com",
     "password": "1234",
     "userType":"universitas",
 
-    "namaRektor" :"Pak jojo",
-	"ktpRektor"  :"lorem.png",
+    "namaRektor" :"Pak Universitas3",
+	"ktpRektor"  :"Universitas3.png",
 	"isVerified" :true,
-	"alamat"     :"Kebumen"
+	"alamat"     :"jakarta"
      
 }
 
@@ -69,6 +86,34 @@ content-type: application/json
 }
 
 ### DELETE USER
-DELETE http://localhost:8080/users/8
+DELETE http://localhost:8080/users/7
 ### DELETE USERS
 DELETE http://localhost:8080/users
+
+
+# ----------- Jabatan ----------
+
+### CREATE JABATAN MAHASISWA
+POST http://localhost:8080/users/10/jabatan
+content-type: application/json
+
+{
+    "namaJabatan": "Ketua",
+    "namaOrganisasi":"organisasi1-1",
+    "idMahasiswa": 1,
+    "idUserMahasiswa": 10,
+    "idUserOrganisasi": 4
+}
+
+ 
+
+### UPDATE JABATAN
+PUT http://localhost:8080/users/:id/jabatan
+content-type: application/json
+
+{
+     
+}
+
+### DELETE JABATAN
+DELETE http://localhost:8080/users/10/jabatan
