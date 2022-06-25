@@ -21,4 +21,8 @@ func ConnectDatabase() {
 	DB.AutoMigrate(&Fakultas{})
 	DB.AutoMigrate(&Prodi{})
 	DB.AutoMigrate(&Jabatan{})
+	DB.AutoMigrate(&Post{})
+	DB.AutoMigrate(&Comment{})
+	DB.AutoMigrate(&Save{})
+	DB.AutoMigrate(&Like{})
 }

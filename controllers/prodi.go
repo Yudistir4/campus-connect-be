@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"first-app/models"
-	"log"
+
 	"math"
 	"net/http"
 	"strconv"
@@ -57,7 +57,8 @@ func GetProdi(c *gin.Context) {
 	var prodi models.Prodi
 	err := models.DB.Preload("Fakultas").First(&prodi, id).Error
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(500, gin.H{"message": "something went wrong"})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": &prodi})
 }
@@ -67,12 +68,14 @@ func CreateProdi(c *gin.Context) {
 	var prodi models.Prodi
 	err := c.ShouldBindJSON(&prodi)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(500, gin.H{"message": "something went wrong"})
+		return
 	}
 
 	err = models.DB.Create(&prodi).Error
 	if err != nil {
-		log.Fatal("ERROR CREATE", err)
+		c.JSON(500, gin.H{"message": "Create prodi failed"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": &prodi})
@@ -92,7 +95,8 @@ func DeleteProdi(c *gin.Context) {
 	id := c.Param("id")
 	err := models.DB.Delete(&prodi, id).Error
 	if err != nil {
-		log.Fatal("ERROR DELETE", err)
+		c.JSON(500, gin.H{"message": "something went wrong"})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success delete ",

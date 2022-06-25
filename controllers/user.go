@@ -3,7 +3,6 @@ package controllers
 import (
 	"first-app/models"
 	"fmt"
-	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -63,9 +62,9 @@ func GetUsers(c *gin.Context) {
 				Find(&users)
 		} else if userType == "mahasiswa" {
 			models.DB.
+				Order(order).Limit(limit).Offset(startIndex).
 				Preload("Mahasiswa").Preload("Mahasiswa.Prodi").Preload("Mahasiswa.Fakultas").
 				Joins("left join mahasiswas on mahasiswas.id = users.id_mahasiswa").
-				Order(order).Limit(limit).Offset(startIndex).
 				Where("mahasiswas.id_user_universitas = ?", IdUserUniversitas).
 				// Where("organisasis.id_user_universitas = ?", idUserUniversitas).
 				Where("user_type = ?", userType).
@@ -102,8 +101,9 @@ func GetUsers(c *gin.Context) {
 			models.DB.
 				Preload("Mahasiswa").Preload("Mahasiswa.Jabatan").Preload("Mahasiswa.Prodi").Preload("Mahasiswa.Fakultas").
 				Joins("left join mahasiswas on mahasiswas.id = users.id_mahasiswa").
+				Joins("left join jabatans on jabatans.id = mahasiswas.id_jabatan").
 				Order(order).Limit(limit).Offset(startIndex).
-				Where("mahasiswas.id_user_universitas = ?", IdUserOrganisasi).
+				Where("jabatans.id_user_organisasi = ?", IdUserOrganisasi).
 				Where("user_type = ?", userType).Where("name LIKE ?", "%"+name+"%").
 				Find(&users)
 		} else if userType == "mahasiswa" {
@@ -143,7 +143,7 @@ func GetUsers(c *gin.Context) {
 		"totalPages": math.Ceil(float64(count) / float64(limit)),
 		"page":       page,
 		"limit":      limit,
-		"data":       users})
+		"data":       &users})
 }
 func GetUser(c *gin.Context) {
 	id := c.Param("id")
@@ -151,19 +151,22 @@ func GetUser(c *gin.Context) {
 	err := models.DB.Preload("Universitas").Preload("Mahasiswa").Preload("Mahasiswa.Jabatan").Preload("Mahasiswa.Prodi").Preload("Mahasiswa.Fakultas").
 		Preload("Organisasi").First(&user, id).Error
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(404, gin.H{"message": "user not found"})
 	}
+	user.Password = ""
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
 type UserInput struct {
 	ID            int
 	Name          string `gorm:"null" json:"name"`
-	Profilepic    string `gorm:"null" json:"profilepic"`
+	ProfilePic    string `gorm:"null" json:"profilePic"`
 	Email         string `gorm:"size:255;not null;unique" json:"email"`
 	Password      string `gorm:"size:255;not null;" json:"password"`
 	Bio           string `gorm:"null" json:"bio"`
 	Link          string `gorm:"null" json:"link"`
+	Linkedin      string `gorm:"null" json:"linkedin"`
+	Instagram     string `gorm:"null" json:"instagram"`
 	Whatsapp      string `gorm:"null" json:"whatsapp"`
 	UserType      string `gorm:"null" json:"userType"`
 	IdMahasiswa   int
@@ -196,7 +199,8 @@ func CreateUser(c *gin.Context) {
 	var userInput UserInput
 	err := c.ShouldBindJSON(&userInput)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(500, gin.H{"message": "something went wrong"})
+		return
 	}
 
 	if userInput.UserType == "mahasiswa" {
@@ -211,7 +215,8 @@ func CreateUser(c *gin.Context) {
 
 		err = models.DB.Create(&mahasiswa).Error
 		if err != nil {
-			log.Fatal("ERROR CREATE===", err)
+			c.JSON(500, gin.H{"message": "Create mahasiswa failed"})
+			return
 		}
 
 		user.Name = userInput.Name
@@ -229,7 +234,8 @@ func CreateUser(c *gin.Context) {
 
 		err = models.DB.Create(&organisasi).Error
 		if err != nil {
-			log.Fatal("ERROR CREATE===", err)
+			c.JSON(500, gin.H{"message": "Create organisasi failed"})
+			return
 		}
 
 		user.Name = userInput.Name
@@ -249,7 +255,8 @@ func CreateUser(c *gin.Context) {
 
 		err = models.DB.Create(&universitas).Error
 		if err != nil {
-			log.Fatal("ERROR CREATE UNIVERSITAS", err)
+			c.JSON(500, gin.H{"message": "Create Universitas failed"})
+			return
 		}
 
 		user.Name = userInput.Name
@@ -261,29 +268,150 @@ func CreateUser(c *gin.Context) {
 
 	err = models.DB.Create(&user).Error
 	if err != nil {
-		log.Fatal("ERROR CREATE===", err)
+		c.JSON(400, gin.H{"message": "Create User Failed"})
 	}
+	err = models.DB.Preload("Universitas").Preload("Mahasiswa").Preload("Mahasiswa.Jabatan").Preload("Mahasiswa.Prodi").Preload("Mahasiswa.Fakultas").
+		Preload("Organisasi").Take(&user, user.ID).Error
+	if err != nil {
+		c.JSON(404, gin.H{"message": "Update User Failed"})
+		return
+	}
+	user.Password = ""
 
-	c.JSON(http.StatusOK, gin.H{"data": &user, "dataBefore": &userInput})
+	c.JSON(http.StatusOK, gin.H{"data": &user})
 	// c.JSON(http.StatusOK, gin.H{"data": &user})
 
 }
-func UpdateUser(c *gin.Context) {}
+func UpdateUserProfile(c *gin.Context) {
+
+	id := c.Param("id")
+	var userInput UserInput
+	var user models.User
+	err := models.DB.Take(&user, id).Error
+	if err != nil {
+		c.JSON(500, gin.H{"message": "User Not Found"})
+		return
+	}
+	err = c.ShouldBindJSON(&userInput)
+	if err != nil {
+		c.JSON(500, gin.H{"message": "something went wrong", "error": err})
+		return
+	}
+
+	user.ProfilePic = userInput.ProfilePic
+	user.Bio = userInput.Bio
+	user.Whatsapp = userInput.Whatsapp
+	user.Link = userInput.Link
+	user.Linkedin = userInput.Linkedin
+	user.Instagram = userInput.Instagram
+	err = models.DB.Save(&user).Error
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Update User Failed"})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "Update User succcess"})
+}
+func UpdateUser(c *gin.Context) {
+	id := c.Param("id")
+	var userInput UserInput
+	var user models.User
+	var mahasiswa models.Mahasiswa
+	var organisasi models.Organisasi
+	err := models.DB.Take(&user, id).Error
+	if err != nil {
+		c.JSON(500, gin.H{"message": "User Not Found"})
+		return
+	}
+	err = c.ShouldBindJSON(&userInput)
+	if err != nil {
+		c.JSON(500, gin.H{"message": "something went wrong", "error": err})
+		return
+	}
+
+	user.Name = userInput.Name
+	user.Email = userInput.Email
+	if user.Email != userInput.Email {
+		// Generate random password
+		// Send password to email mahasiswa
+		// TO DO ...
+		// If Fail send email return email not valid
+		// hashing password
+		user.Password = "1234"
+
+	}
+	user.UserType = userInput.UserType
+
+	if userInput.UserType == "mahasiswa" {
+		err = models.DB.Take(&mahasiswa, userInput.IdMahasiswa).Error
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Mahasiswa not Found"})
+			return
+		}
+		mahasiswa.Semester = userInput.Semester
+		mahasiswa.Nim = userInput.Nim
+		mahasiswa.StatusMahasiswa = userInput.StatusMahasiswa
+		mahasiswa.IdUserUniversitas = userInput.IdUserUniversitas
+		mahasiswa.Universitas = userInput.Universitas
+		mahasiswa.IdFakultas = userInput.IdFakultas
+		mahasiswa.IdProdi = userInput.IdProdi
+
+		err = models.DB.Save(&mahasiswa).Error
+		if err != nil {
+			c.JSON(500, gin.H{"message": "Update Mahasiswa  Failed"})
+			return
+		}
+		user.IdMahasiswa = mahasiswa.ID
+
+	} else if userInput.UserType == "organisasi" {
+		err = models.DB.Take(&organisasi, userInput.IdOrganisasi).Error
+		if err != nil {
+			c.JSON(404, gin.H{"error": "Organisasi not Found"})
+			return
+		}
+		organisasi.IdUserUniversitas = userInput.IdUserUniversitas
+		organisasi.Universitas = userInput.Universitas
+
+		err = models.DB.Save(&organisasi).Error
+		if err != nil {
+			c.JSON(500, gin.H{"message": "Update Organisasi  Failed"})
+			return
+		}
+		user.IdOrganisasi = organisasi.ID
+	}
+
+	err = models.DB.Save(&user).Error
+	if err != nil {
+		c.JSON(500, gin.H{"message": "Update User Failed"})
+		return
+	}
+	// kembalikan data
+	err = models.DB.Preload("Universitas").Preload("Mahasiswa").Preload("Mahasiswa.Jabatan").Preload("Mahasiswa.Prodi").Preload("Mahasiswa.Fakultas").
+		Preload("Organisasi").Take(&user, user.ID).Error
+	if err != nil {
+		c.JSON(404, gin.H{"message": "Update User Failed"})
+		return
+	}
+	user.Password = ""
+
+	c.JSON(200, gin.H{"message": "Update User succcess", "data": &user})
+}
 
 // delete user
 func DeleteUser(c *gin.Context) {
 	// Note
 	// if userType == universitas maka hapus seluruh user mahasiswa dan organisasi yang ada di univ tsb
-
+	// delete recor mahasiswa/universitas/ organisasi
 	var user models.User
 
 	id := c.Param("id")
 	err := models.DB.Delete(&user, id).Error
 	if err != nil {
-		log.Fatal("ERROR DELETE", err)
+		c.JSON(500, gin.H{"message": "something went wrong"})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Success delete ",
+		"message": "Success delete",
 	})
 }
 
@@ -292,96 +420,5 @@ func DeleteUsers(c *gin.Context) {
 	models.DB.Exec("DELETE FROM users")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success",
-	})
-}
-
-// -------- JABATANS ------------
-
-type InputJabatan struct {
-	NamaJabatan      string
-	NamaOrganisasi   string
-	IdMahasiswa      int
-	IdUserMahasiswa  int
-	IdUserOrganisasi int
-}
-
-func CreateJabatan(c *gin.Context) {
-
-	var user models.User
-	var inputJabatan InputJabatan
-	var mahasiswa models.Mahasiswa
-	var jabatan models.Jabatan
-	err := c.ShouldBindJSON(&inputJabatan)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Find Mahasiswa
-	err = models.DB.First(&mahasiswa, inputJabatan.IdMahasiswa).Error
-	if err != nil {
-		log.Fatal("ERROR Find", err)
-	}
-	if mahasiswa.IdJabatan != 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "user sudah punya jabatan"})
-		return
-	}
-
-	// create Jabatan
-	jabatan.NamaJabatan = inputJabatan.NamaJabatan
-	jabatan.NamaOrganisasi = inputJabatan.NamaOrganisasi
-	jabatan.IdUserMahasiswa = inputJabatan.IdUserMahasiswa
-	jabatan.IdUserOrganisasi = inputJabatan.IdUserOrganisasi
-	err = models.DB.Create(&jabatan).Error
-	if err != nil {
-		log.Fatal("ERROR CREATE", err)
-	}
-
-	// assign ID jabatan to table Mahasiswa
-	mahasiswa.IdJabatan = int(jabatan.ID)
-	// save
-	models.DB.Save(&mahasiswa)
-	models.DB.Preload("Mahasiswa").Preload("Mahasiswa.Jabatan").First(&user, inputJabatan.IdUserMahasiswa)
-
-	c.JSON(http.StatusOK, gin.H{"data": &user})
-
-}
-
-func UpdateJabatan(c *gin.Context) {}
-
-// delete jabatan
-func DeleteJabatan(c *gin.Context) {
-	// Note
-
-	id := c.Param("id")
-	var user models.User
-	var mahasiswa models.Mahasiswa
-	var jabatan models.Jabatan
-
-	// find user to get Id table mahasiswa
-	err := models.DB.Preload("Mahasiswa").First(&user, id).Error
-	if err != nil {
-		log.Fatal("ERROR Find", err)
-	}
-
-	// find table mahasiswa
-	err = models.DB.First(&mahasiswa, user.IdMahasiswa).Error
-	if err != nil {
-		log.Fatal("ERROR Find", err)
-	}
-
-	// Delete jabatan
-	err = models.DB.Delete(&jabatan, mahasiswa.IdJabatan).Error
-	if err != nil {
-		log.Fatal("ERROR DELETE", err)
-	}
-
-	// update IdJabatan mahasiswa
-	mahasiswa.IdJabatan = 0
-	models.DB.Save(&mahasiswa)
-	models.DB.Preload("Mahasiswa").Preload("Mahasiswa.Jabatan").First(&user, id)
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Success delete Jabatan",
-		"data":    &user,
 	})
 }

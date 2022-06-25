@@ -1,17 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import "time"
 
 type Fakultas struct {
-	gorm.Model
-	NamaFakultas      string
-	IdUserUniversitas int
-	// IdUserUniversitas int
-	// Universitas       string
-
-	// User              User `gorm:"foreignKey:IdUserUniversitas"`
-	// idUserUniversitas: "foreignKey",
-	// IdProdi: "foreignKey",
-	// idFakultas: "foreignKey",
-	// idJabatan: "foreignKey",
+	ID                int       `gorm:"primaryKey" json:"id"`
+	CreatedAt         time.Time `json:"createdAt"`
+	NamaFakultas      string    `gorm:"not null" json:"namaFakultas"`
+	IdUserUniversitas int       `gorm:"not null" json:"idUserUniversitas"`
 }

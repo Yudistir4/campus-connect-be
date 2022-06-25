@@ -5,7 +5,7 @@ GET http://localhost:8080/fakultas
 GET http://localhost:8080/fakultas?page=1&limit=10&idUserUniversitas=1&namaFakultas=k
 
 ### GET FAKULTASS (idUserUniversitas)
-GET http://localhost:8080/fakultas?page=1&limit=2&idUserUniversitas=1&order=created_at desc
+GET http://localhost:8080/fakultas?page=1&limit=30&idUserUniversitas=1&order=created_at desc
 
 
 ### GET FAKULTAS
@@ -23,11 +23,11 @@ content-type: application/json
  
 
 ### UPDATE FAKULTAS
-PUT http://localhost:8080/fakultas/id
+PUT http://localhost:8080/fakultas/29
 content-type: application/json
 
 {
-     
+         "namaFakultas": "0000"
 }
 
 ### DELETE FAKULTAS

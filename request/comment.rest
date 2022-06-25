@@ -1,0 +1,26 @@
+### GET COMMENTS
+GET http://localhost:8080/comments
+
+### GET COMMENTS (idPost)
+GET http://localhost:8080/comments?page=1&limit=10&idPost=1
+
+ 
+
+### GET COMMENT
+GET http://localhost:8080/comments/1
+
+### CREATE COMMENT MAHASISWA
+POST http://localhost:8080/comments
+content-type: application/json
+
+{
+    "comment": "lorem ipsum 4",
+    "idPost": 1,
+    "idUser": 3
+}
+
+
+### DELETE COMMENT
+DELETE http://localhost:8080/comments/1
+### DELETE COMMENTS
+DELETE http://localhost:8080/comments

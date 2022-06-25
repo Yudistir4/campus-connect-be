@@ -1,0 +1,41 @@
+### GET JABATANS
+GET http://localhost:8080/jabatan
+
+ 
+
+### GET USERS (idUserOrganisasi,userType)
+GET http://localhost:8080/users?page=1&limit=10&idUserOrganisasi=5&userType=mahasiswa&order=users.created_at desc
+
+### GET JABATAN
+GET http://localhost:8080/jabatan/1
+
+### CREATE JABATAN MAHASISWA
+POST http://localhost:8080/jabatan
+content-type: application/json
+
+{
+    "namaJabatan": "Ketua",
+    "namaOrganisasi":"organisasi1-1",
+    "idMahasiswa": 1,
+    "idUserMahasiswa": 10,
+    "idUserOrganisasi": 4  
+}
+
+ 
+
+### UPDATE JABATAN
+PUT http://localhost:8080/jabatan/1
+content-type: application/json
+
+{
+     "namaJabatan": "Ketua geng",
+    "namaOrganisasi":"organisasi1-2",
+    "idMahasiswa": 2,
+    "idUserMahasiswa": 4,
+    "idUserOrganisasi": 5  
+}
+
+### DELETE JABATAN
+DELETE http://localhost:8080/jabatan/1
+### DELETE JABATANS
+DELETE http://localhost:8080/jabatan

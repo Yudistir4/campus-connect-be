@@ -1,17 +1,20 @@
 ### GET USERS
-GET http://localhost:8080/users
+GET http://localhost:8080/users?page=1&limit=20
 ### GET USERS (name,idUserUniversitas,userType)
 GET http://localhost:8080/users?page=1&limit=10&idUserUniversitas=1&userType=mahasiswa&name=mahasiswa1-1
 ### GET USERS (idUserUniversitas,userType)
-GET http://localhost:8080/users?page=1&limit=1&idUserUniversitas=1&userType=mahasiswa
+GET http://localhost:8080/users?page=1&limit=10&idUserUniversitas=1&userType=mahasiswa&order=users.created_at desc
 
+
+
+### GET USERS (idUserOrganisasi,userType,Name+Nama Jabatan)
+GET http://localhost:8080/users?page=1&limit=1&idUserOrganisasi=3&userType=mahasiswa&order=users.created_at desc
 
 ### GET USERS (idUserOrganisasi,userType)
-GET http://localhost:8080/users?page=1&limit=1&idUserOrganisasi=3&userType=mahasiswa
-
+GET http://localhost:8080/users?page=1&limit=1&idUserOrganisasi=3&userType=mahasiswa&order=users.created_at desc
 
 ### GET USERS (name)
-GET http://localhost:8080/users?page=1&limit=2&name=maha
+GET http://localhost:8080/users?page=1&limit=2&name=universitas2
 ### GET USERS (isVerified)
 GET http://localhost:8080/users?page=1&limit=10&userType=universitas&isVerified=true
 ### GET USERS
@@ -19,24 +22,46 @@ GET http://localhost:8080/users?page=1&limit=10&userType=universitas
 
 
 ### GET USER
-GET http://localhost:8080/users/13
+GET http://localhost:8080/users/1
 
 ### CREATE USER MAHASISWA
 POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "mahasiswa2-1",
-    "email": "mahasiswa2-1@mail.com",
+    "name": "mahasiswa1-2",
+    "email": "mahasiswa1-2@mail.com",
     "userType":"mahasiswa",
 
     "semester": 3,
-    "nim": "mahasiswa2-1",
+    "nim": "mahasiswa1-2",
+    "statusMahasiswa": "aktif",
+    "idUserUniversitas": 2,
+    "universitas": "Universitas2",
+    "idFakultas":1,
+    "idProdi":1
+
+    
+}
+### UPDATE USER MAHASISWA
+PUT http://localhost:8080/users/3
+content-type: application/json
+
+{
+    "name": "mahasiswa1-2 updae",
+    "email": "mahasiswa1-2@mail.com",
+    "userType":"mahasiswa",
+
+    "semester": 3,
+    "nim": "mahasiswa1-2",
     "statusMahasiswa": "aktif",
     "idUserUniversitas": 1,
     "universitas": "Universitas1",
-    "idFakultas":1,
-    "idProdi":1
+    "idFakultas":3,
+    "idProdi":5,
+
+    "idMahasiswa":1
+
 
     
 }
@@ -46,11 +71,25 @@ POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "organisasi3-1",
-    "email": "organisasi3-1@mail.com",
+    "name": "Badan Eksekutif Mahasiswa UT",
+    "email": "bem1@mail.com",
     "userType":"organisasi",
     "idUserUniversitas": 1,
-    "universitas": "Universitas1"
+    "universitas": "Universitas Terbuka"
+}
+### UPDATE USER ORGANISASI
+PUT http://localhost:8080/users/5
+content-type: application/json
+
+{
+    "name": "Badan Eksekutif Mahasiswa UT",
+    "email": "bem1@mail.com",
+    "userType":"organisasi",
+    "idUserUniversitas": 1,
+    "universitas": "Universitas Terbuka",
+
+    "idOrganisasi":1
+    
 }
 
 ### CREATE USER UNIVERSITAS
@@ -58,13 +97,13 @@ POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "Universitas3",
-    "email": "Universitas3@mail.com",
-    "password": "1234",
+    "name": "Universitas Merdeka",
+    "email": "UniversitasMerdeka@mail.com",
+    "password": "abcd",
     "userType":"universitas",
 
-    "namaRektor" :"Pak Universitas3",
-	"ktpRektor"  :"Universitas3.png",
+    "namaRektor" :"Pak Joko",
+	"ktpRektor"  :"UniversitasMerdeka.png",
 	"isVerified" :true,
 	"alamat"     :"jakarta"
      
@@ -77,12 +116,17 @@ content-type: application/json
 {
 }
 
-### UPDATE USER
-PUT http://localhost:8080/users
+### UPDATE USER PROFILE
+PUT http://localhost:8080/users/1
 content-type: application/json
 
 {
-     
+    "email"    :"ase@mail.com",             
+	"bio"      :"Lorem asdfasdf",     
+	"link"     :"",
+	"profilepic"     :"",
+	"whatsapp" :"",
+    "linkedin" :""
 }
 
 ### DELETE USER
@@ -107,13 +151,7 @@ content-type: application/json
 
  
 
-### UPDATE JABATAN
-PUT http://localhost:8080/users/:id/jabatan
-content-type: application/json
-
-{
-     
-}
+ 
 
 ### DELETE JABATAN
 DELETE http://localhost:8080/users/10/jabatan

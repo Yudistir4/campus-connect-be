@@ -16,7 +16,7 @@ POST http://localhost:8080/prodi
 content-type: application/json
 
 {
-    "namaProdi": "Teknik Informatika",
+    "namaProdi": "Sistem Informatika",
     "idUserUniversitas": 1,
     "idFakultas": 1
 }

@@ -1,0 +1,2 @@
+### GET JABATANS
+GET http://localhost:8080/upload

@@ -1,0 +1,81 @@
+### GET likes (fitur sementara)
+GET http://localhost:8080/like
+### GET Saves (fitur sementara)
+GET http://localhost:8080/save
+### GET POSTS
+GET http://localhost:8080/posts?page=1&limit=30&idUser=1
+
+
+### GET POSTS (saved)
+GET http://localhost:8080/posts?page=1&limit=10&idUser=1&isSave=true
+
+### GET POSTS (idUserUniversitas) => get post di univ
+GET http://localhost:8080/posts?page=1&limit=10&idUser=1&idUserUniversitas=1
+
+### GET POSTS (isNews)  => get all post dengan status isNews
+GET http://localhost:8080/posts?page=1&limit=30&idUser=1&isNews=true
+
+### GET POST => get single post
+GET http://localhost:8080/posts/2
+
+### CREATE POST BIASA
+POST http://localhost:8080/posts
+content-type: application/json
+
+{
+    "idUser": 3,
+    "materi": "https://source.unsplash.com/random/500x500",
+    "caption": "lorem ipsum dolor is amet lorem ipsum amet is dolor asf adfasdfasdf ",
+    "isNews": false,
+    "idUserUniversitas":1
+}
+
+### CREATE POST NEWS
+POST http://localhost:8080/posts
+content-type: application/json
+
+{
+    "idUser": 1,
+    "materi": "filexxx.png",
+    "caption": "loremxxx",
+    "isNews": true,
+    "idUserUniversitas":1
+}
+### SAVE POST
+POST http://localhost:8080/posts/4/save
+content-type: application/json
+
+{
+    "idUser": 1 ,
+    "idPost": 7 
+}
+### UNSAVE POST
+POST http://localhost:8080/posts/3/unsave
+content-type: application/json
+
+{
+    "idUser": 1 ,
+    "idPost": 1 
+}
+
+### LIKE POST
+POST http://localhost:8080/posts/1/like
+content-type: application/json
+
+{
+    "idUser": 5 ,
+    "idPost": 1 
+}
+### UNSAVE POST
+POST http://localhost:8080/posts/1/unlike
+content-type: application/json
+
+{
+    "idUser": 2 ,
+    "idPost": 1 
+}
+ 
+### DELETE POST
+DELETE http://localhost:8080/posts/2
+### DELETE POSTS
+DELETE http://localhost:8080/posts

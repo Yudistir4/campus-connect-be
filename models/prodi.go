@@ -1,13 +1,14 @@
 package models
 
-import "gorm.io/gorm"
+import "time"
 
 type Prodi struct {
-	gorm.Model
-	NamaProdi         string
-	IdUserUniversitas int
-	IdFakultas        int
-	Fakultas          Fakultas `gorm:"foreignKey:IdFakultas"`
+	ID                int       `gorm:"primaryKey" json:"id"`
+	CreatedAt         time.Time `json:"createdAt"`
+	NamaProdi         string    `gorm:"not null" json:"namaProdi"`
+	IdUserUniversitas int       `gorm:"not null" json:"idUserUniversitas"`
+	IdFakultas        int       `gorm:"not null" json:"idFakultas"`
+	Fakultas          Fakultas  `gorm:"foreignKey:IdFakultas" json:"fakultas"`
 	// IdUserUniversitas int
 	// Universitas       string
 
