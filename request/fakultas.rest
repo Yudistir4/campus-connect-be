@@ -16,7 +16,7 @@ POST http://localhost:8080/fakultas
 content-type: application/json
 
 {
-    "namaFakultas": "Ilmu Kesehatan",
+    "namaFakultas": "Ilmu Komputer",
     "idUserUniversitas": 1
 }
 

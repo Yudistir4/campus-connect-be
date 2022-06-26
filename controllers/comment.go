@@ -72,9 +72,17 @@ func CreateComment(c *gin.Context) {
 	err = models.DB.Create(&comment).Error
 	if err != nil {
 		c.JSON(500, gin.H{"message": "Comment Failed"})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": &comment})
+	var respon responseComment
+	err = models.DB.Model(&models.Comment{}).Preload("User").Take(&respon, comment.ID).Error
+	if err != nil {
+		c.JSON(500, gin.H{"message": "Get Comment Failed"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": &respon})
 	// c.JSON(http.StatusOK, gin.H{"data": &comment})
 
 }

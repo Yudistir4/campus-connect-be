@@ -100,6 +100,10 @@ func GetPosts(c *gin.Context) {
 
 	}
 
+	if posts == nil {
+		posts = []Posts{}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 
 		"totalData": len(posts),

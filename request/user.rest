@@ -29,19 +29,18 @@ POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "mahasiswa1-2",
-    "email": "mahasiswa1-2@mail.com",
+    "name": "joko sujoko",
+    "email": "jokosd@mail.com",
     "userType":"mahasiswa",
 
     "semester": 3,
-    "nim": "mahasiswa1-2",
+    "nim": "1029102",
     "statusMahasiswa": "aktif",
-    "idUserUniversitas": 2,
-    "universitas": "Universitas2",
+    "idUserUniversitas": 1,
+    "universitas": "Universitas Merdeka",
     "idFakultas":1,
     "idProdi":1
 
-    
 }
 ### UPDATE USER MAHASISWA
 PUT http://localhost:8080/users/3
@@ -71,22 +70,22 @@ POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "Badan Eksekutif Mahasiswa UT",
+    "name": "Badan Eksekutif Mahasiswa Univ Merdeka",
     "email": "bem1@mail.com",
     "userType":"organisasi",
     "idUserUniversitas": 1,
-    "universitas": "Universitas Terbuka"
+    "universitas": "Universitas Merdeka"
 }
 ### UPDATE USER ORGANISASI
 PUT http://localhost:8080/users/5
 content-type: application/json
 
 {
-    "name": "Badan Eksekutif Mahasiswa UT",
+    "name": "Badan Eksekutif Mahasiswa Univ Merdeka",
     "email": "bem1@mail.com",
     "userType":"organisasi",
     "idUserUniversitas": 1,
-    "universitas": "Universitas Terbuka",
+    "universitas": "Universitas Merdeka",
 
     "idOrganisasi":1
     
