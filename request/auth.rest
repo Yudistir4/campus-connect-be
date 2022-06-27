@@ -1,0 +1,32 @@
+### CREATE JABATAN MAHASISWA
+PUT http://localhost:8080/users/6/password
+content-type: application/json
+
+{
+    "id": 6,
+    "oldPassword":"12345",
+    "newPassword":"1234"
+    
+}
+###
+
+POST http://localhost:8080/users/signin
+content-type: application/json
+
+{
+    "email": "yudistir4maulana@gmail.com",
+    "password": "Dsc2WD"
+}
+###
+
+POST http://localhost:8080/users/signup
+content-type: application/json
+
+{
+    "name": "Universitas gua",
+    "email": "koko@mail.com",
+    "password": "123456",
+    "namaRektor":"joko",
+    "ktpRektor":"koko.png",
+    "alamat":"jakarta"
+}

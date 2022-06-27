@@ -2,12 +2,15 @@ package controllers
 
 import (
 	"first-app/models"
+	"first-app/utils"
 	"fmt"
+
 	"math"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetUsers(c *gin.Context) {
@@ -34,6 +37,7 @@ func GetUsers(c *gin.Context) {
 			Preload("Organisasi").
 			Order(order).Limit(limit).Offset(startIndex).
 			Where("name LIKE ?", "%"+name+"%").
+			Where("user_type != ?", "admin").
 			Find(&users)
 	} else if idUserUniversitas != "" {
 		fmt.Println("List Mahasiswa / Organisasi =====")
@@ -134,7 +138,7 @@ func GetUsers(c *gin.Context) {
 			Find(&users)
 	} else {
 		fmt.Println("query")
-		models.DB.Where(&user).Order(order).Limit(limit).Offset(startIndex).Preload("Mahasiswa").Preload("Organisasi").Preload("Universitas").Find(&users)
+		models.DB.Where(&user).Order(order).Limit(limit).Offset(startIndex).Preload("Mahasiswa").Preload("Organisasi").Preload("Universitas").Where("user_type != ?", "admin").Find(&users)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -189,6 +193,10 @@ type UserInput struct {
 	IsVerified bool
 	Alamat     string
 }
+type PasswordInput struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}
 
 func CreateUser(c *gin.Context) {
 
@@ -219,11 +227,6 @@ func CreateUser(c *gin.Context) {
 			return
 		}
 
-		user.Name = userInput.Name
-		user.Email = userInput.Email
-		//Generate random password
-		user.Password = "1234"
-		user.UserType = userInput.UserType
 		user.IdMahasiswa = int(mahasiswa.ID)
 		// Send password to email mahasiswa
 		// TO DO ...
@@ -238,11 +241,6 @@ func CreateUser(c *gin.Context) {
 			return
 		}
 
-		user.Name = userInput.Name
-		user.Email = userInput.Email
-		//Generate random password
-		user.Password = "1234"
-		user.UserType = userInput.UserType
 		user.IdOrganisasi = int(organisasi.ID)
 		// Send password to email mahasiswa
 		// TO DO ...
@@ -259,12 +257,31 @@ func CreateUser(c *gin.Context) {
 			return
 		}
 
-		user.Name = userInput.Name
-		user.Email = userInput.Email
-		user.Password = userInput.Password
-		user.UserType = userInput.UserType
 		user.IdUniversitas = int(universitas.ID)
 	}
+	user.Name = userInput.Name
+	user.Email = userInput.Email
+	user.Password = userInput.Password
+	user.UserType = userInput.UserType
+
+	if userInput.UserType == "mahasiswa" || userInput.UserType == "organisasi" {
+		// generate password
+		user.Password = "1234"
+		// user.Password = utils.RandomString(6)
+		// send password to email
+		// utils.Sendmail(user.Email, user.Password)
+	}
+	// hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"status code": 400,
+			"message":     "Error hashing password",
+			"error":       err,
+		})
+		return
+	}
+	user.Password = string(hashedPassword)
 
 	err = models.DB.Create(&user).Error
 	if err != nil {
@@ -312,13 +329,95 @@ func UpdateUserProfile(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "Update User succcess"})
 }
+func UpdatePassword(c *gin.Context) {
+
+	id := c.Param("id")
+	var passwordInput PasswordInput
+	var user models.User
+
+	err := models.DB.Take(&user, id).Error
+	if err != nil {
+		c.JSON(500, gin.H{"message": "User Not Found"})
+		return
+	}
+
+	err = c.ShouldBindJSON(&passwordInput)
+	if err != nil {
+		c.JSON(500, gin.H{"message": "something went wrong", "error": err})
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passwordInput.OldPassword))
+	if err != nil {
+		c.JSON(400, gin.H{
+			"status code": 400,
+			"message":     "Invalid old Password",
+			"error":       err})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(passwordInput.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"status code": 400,
+			"message":     "Error hashing password",
+			"error":       err,
+		})
+		return
+	}
+	user.Password = string(hashedPassword)
+	err = models.DB.Save(&user).Error
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Update Password Failed"})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "Update Password succcess"})
+}
+func UpdateVerifiedUniversitas(c *gin.Context) {
+
+	id := c.Param("id")
+	var userInput UserInput
+	var user models.User
+	var universitas models.Universitas
+
+	err := c.ShouldBindJSON(&userInput)
+	if err != nil {
+		c.JSON(500, gin.H{"message": "something went wrong", "error": err})
+		return
+	}
+
+	err = models.DB.Take(&user, id).Error
+	if err != nil {
+		c.JSON(404, gin.H{"error": "universitas not Found"})
+		return
+	}
+	err = models.DB.Take(&universitas, user.IdUniversitas).Error
+	if err != nil {
+		c.JSON(404, gin.H{"error": "universitas not Found"})
+		return
+	}
+	universitas.IsVerified = userInput.IsVerified
+
+	err = models.DB.Save(&universitas).Error
+	if err != nil {
+		c.JSON(500, gin.H{"message": "Update universitas  Failed"})
+		return
+	}
+	if userInput.IsVerified == true {
+		utils.SendmailVerified(user.Email, user.Name)
+	}
+
+	c.JSON(200, gin.H{"message": "Update Password succcess"})
+}
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 	var userInput UserInput
 	var user models.User
 	var mahasiswa models.Mahasiswa
 	var organisasi models.Organisasi
-	err := models.DB.Take(&user, id).Error
+	var universitas models.Universitas
+	err := models.DB.Preload("Universitas").Preload("Organisasi").Preload("Mahasiswa").Take(&user, id).Error
 	if err != nil {
 		c.JSON(500, gin.H{"message": "User Not Found"})
 		return
@@ -378,6 +477,20 @@ func UpdateUser(c *gin.Context) {
 			return
 		}
 		user.IdOrganisasi = organisasi.ID
+	} else if userInput.UserType == "universitas" {
+		err = models.DB.Take(&universitas, user.IdUniversitas).Error
+		if err != nil {
+			c.JSON(404, gin.H{"error": "universitas not Found"})
+			return
+		}
+		universitas.IsVerified = userInput.IsVerified
+
+		err = models.DB.Save(&universitas).Error
+		if err != nil {
+			c.JSON(500, gin.H{"message": "Update universitas  Failed"})
+			return
+		}
+
 	}
 
 	err = models.DB.Save(&user).Error

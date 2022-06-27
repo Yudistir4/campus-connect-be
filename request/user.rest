@@ -14,7 +14,7 @@ GET http://localhost:8080/users?page=1&limit=1&idUserOrganisasi=3&userType=mahas
 GET http://localhost:8080/users?page=1&limit=1&idUserOrganisasi=3&userType=mahasiswa&order=users.created_at desc
 
 ### GET USERS (name)
-GET http://localhost:8080/users?page=1&limit=2&name=universitas2
+GET http://localhost:8080/users?page=1&limit=2&name=admi
 ### GET USERS (isVerified)
 GET http://localhost:8080/users?page=1&limit=10&userType=universitas&isVerified=true
 ### GET USERS
@@ -24,13 +24,23 @@ GET http://localhost:8080/users?page=1&limit=10&userType=universitas
 ### GET USER
 GET http://localhost:8080/users/1
 
+### CREATE USER ADMIN
+POST http://localhost:8080/users
+content-type: application/json
+
+{
+    "name": "admin1",
+    "email": "admin1@mail.com",
+    "userType":"admin",
+    "password":"1234"
+}
 ### CREATE USER MAHASISWA
 POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "joko sujoko",
-    "email": "jokosd@mail.com",
+    "name": "yudis",
+    "email": "yudistir4maulana@gmail.com",
     "userType":"mahasiswa",
 
     "semester": 3,
@@ -96,15 +106,27 @@ POST http://localhost:8080/users
 content-type: application/json
 
 {
-    "name": "Universitas Merdeka",
-    "email": "UniversitasMerdeka@mail.com",
-    "password": "abcd",
+    "name": "Universitas Gajah Mada",
+    "email": "ugm@mail.com",
+    "password": "1234",
     "userType":"universitas",
 
-    "namaRektor" :"Pak Joko",
-	"ktpRektor"  :"UniversitasMerdeka.png",
+    "namaRektor" :"Komeng",
+	"ktpRektor"  :"dummyktp.jpg",
 	"isVerified" :true,
-	"alamat"     :"jakarta"
+	"alamat"     :"jakarta sumedang"
+     
+}
+### UPDATE USER UNIVERSITAS
+PUT http://localhost:8080/users/1
+content-type: application/json
+
+{
+    "name": "Universitas Merdeka",
+    "email": "UniversitasMerdeka@mail.com",
+    "userType":"universitas", 
+	"isVerified" :false
+	 
      
 }
 
@@ -136,17 +158,7 @@ DELETE http://localhost:8080/users
 
 # ----------- Jabatan ----------
 
-### CREATE JABATAN MAHASISWA
-POST http://localhost:8080/users/10/jabatan
-content-type: application/json
 
-{
-    "namaJabatan": "Ketua",
-    "namaOrganisasi":"organisasi1-1",
-    "idMahasiswa": 1,
-    "idUserMahasiswa": 10,
-    "idUserOrganisasi": 4
-}
 
  
 

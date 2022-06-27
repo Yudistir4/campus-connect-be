@@ -39,7 +39,7 @@ content-type: application/json
     "materi": "file.png",
     "caption": "",
     "isNews": true,
-    "idUserUniversitas":1
+    "idUserUniversitas":
 }
 ### SAVE POST
 POST http://localhost:8080/posts/1/save
