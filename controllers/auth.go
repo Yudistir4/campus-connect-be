@@ -14,18 +14,29 @@ type Signup struct {
 	Email      string `json:"email" binding:"required"`
 	Password   string `json:"password" binding:"required"`
 	NamaRektor string `json:"namaRektor" binding:"required"`
-	UserType   string `json:"userType" binding:"required"`
-	IsVerified bool   `json:"isVerified" binding:"required"`
-	KtpRektor  string `json:"ktpRektor" binding:"required"`
-	Alamat     string `json:"alamat" binding:"required"`
+	// UserType   string `json:"userType"`
+	// IsVerified bool   `json:"isVerified"`
+	KtpRektor string `json:"ktpRektor" binding:"required"`
+	Alamat    string `json:"alamat" binding:"required"`
 }
 
 //signup user universitas
 func SignupUser(c *gin.Context) {
 	var register Signup
+	var cekUser models.User
 	err := c.BindJSON(&register)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"status code": 400,
+			"message":     "Something went wrong",
+		})
+		return
+	}
+
 	// if email same error
-	if err := models.DB.Where("email = ?", register.Email).First(&models.User{}).Error; err == nil {
+
+	models.DB.Where("email = ?", register.Email).First(&cekUser)
+	if cekUser.Email == register.Email {
 		c.JSON(400, gin.H{
 			"status code": 400,
 			"message":     "Email already exists",

@@ -24,7 +24,7 @@ content-type: application/json
 
 {
     "name": "Universitas gua",
-    "email": "koko@mail.com",
+    "email": "kokosa@mail.com",
     "password": "123456",
     "namaRektor":"joko",
     "ktpRektor":"koko.png",

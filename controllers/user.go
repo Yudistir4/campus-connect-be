@@ -408,7 +408,18 @@ func UpdateVerifiedUniversitas(c *gin.Context) {
 		utils.SendmailVerified(user.Email, user.Name)
 	}
 
-	c.JSON(200, gin.H{"message": "Update Password succcess"})
+	var respond models.User
+
+	// kembalikan data
+	err = models.DB.Preload("Universitas").Preload("Mahasiswa").Preload("Mahasiswa.Jabatan").Preload("Mahasiswa.Prodi").Preload("Mahasiswa.Fakultas").
+		Preload("Organisasi").Take(&respond, user.ID).Error
+	if err != nil {
+		c.JSON(404, gin.H{"message": "Update User Failed"})
+		return
+	}
+	user.Password = ""
+
+	c.JSON(200, gin.H{"message": "Update Password succcess", "data": &respond})
 }
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")

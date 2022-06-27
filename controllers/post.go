@@ -27,8 +27,10 @@ type Posts struct {
 func GetPosts(c *gin.Context) {
 	idUserUniversitas := c.Query("idUserUniversitas")
 	idUser, _ := strconv.Atoi(c.Query("idUser"))
+	idPost, _ := strconv.Atoi(c.Query("idPost"))
 	isNews := c.Query("isNews")
 	isSave := c.Query("isSave")
+	self := c.Query("self")
 
 	order := c.Query("order")
 	page, _ := strconv.Atoi(c.Query("page"))
@@ -44,6 +46,14 @@ func GetPosts(c *gin.Context) {
 			Order(order).Limit(limit).Offset(startIndex).
 			Where("id_user_universitas = ?", idUserUniversitas).
 			Find(&posts)
+
+	} else if idPost != 0 {
+
+		models.DB.Preload("User").Order(order).Limit(limit).Offset(startIndex).Find(&posts, idPost)
+
+	} else if self != "" {
+
+		models.DB.Preload("User").Order(order).Limit(limit).Offset(startIndex).Where("id_user = ?", idUser).Find(&posts)
 
 	} else if isNews != "" {
 		isNews, _ := strconv.ParseBool(isNews)
@@ -276,6 +286,8 @@ func CreatePost(c *gin.Context) {
 // delete post
 func DeletePost(c *gin.Context) {
 	// Delete all save yg terkait dengan postingan ini
+	// Delete all like yg terkait dengan postingan ini
+	// Delete all comment yg terkait dengan postingan ini
 	// TODO...
 
 	var post models.Post

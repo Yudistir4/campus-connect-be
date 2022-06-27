@@ -3,14 +3,16 @@ GET http://localhost:8080/like
 ### GET Saves (fitur sementara)
 GET http://localhost:8080/save
 ### GET POSTS
-GET http://localhost:8080/posts?page=1&limit=30&idUser=2
+GET http://localhost:8080/posts?page=1&limit=30&idUser=3
+### GET POSTS (idPost)
+GET http://localhost:8080/posts?page=1&limit=30&idUser=3&idPost=2
 
 
 ### GET POSTS (saved)
 GET http://localhost:8080/posts?page=1&limit=10&idUser=1&isSave=true
 
 ### GET POSTS (idUserUniversitas) => get post di univ
-GET http://localhost:8080/posts?page=1&limit=10&idUser=1&idUserUniversitas=1
+GET http://localhost:8080/posts?page=1&limit=10&idUser=3&idUserUniversitas=3
 
 ### GET POSTS (isNews)  => get all post dengan status isNews true
 GET http://localhost:8080/posts?page=1&limit=30&idUser=1&isNews=true
@@ -59,20 +61,20 @@ content-type: application/json
 }
 
 ### LIKE POST
-POST http://localhost:8080/posts/1/like
+POST http://localhost:8080/posts/6/like
 content-type: application/json
 
 {
-    "idUser": 5 ,
-    "idPost": 1 
+    "idUser": 3 ,
+    "idPost": 6 
 }
 ### UNLIKE POST
-POST http://localhost:8080/posts/1/unlike
+POST http://localhost:8080/posts/3/unlike
 content-type: application/json
 
 {
-    "idUser": 2 ,
-    "idPost": 1 
+    "idUser": 3 ,
+    "idPost": 3
 }
  
 ### DELETE POST
