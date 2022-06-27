@@ -115,7 +115,7 @@ func GetPosts(c *gin.Context) {
 
 func GetPost(c *gin.Context) {
 	id := c.Param("id")
-	var post models.Post
+	var post Posts
 	err := models.DB.Preload("User").First(&post, id).Error
 	if err != nil {
 		c.JSON(404, gin.H{"message": "Post Not Found"})
@@ -252,6 +252,7 @@ func GetLikes(c *gin.Context) {
 func CreatePost(c *gin.Context) {
 
 	var post models.Post
+	var respond Posts
 	err := c.ShouldBindJSON(&post)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -263,7 +264,13 @@ func CreatePost(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{"data": post})
+	models.DB.Preload("User").First(&respond, post.ID)
+	if err != nil {
+		c.JSON(500, gin.H{"message": "something went wrong"})
+		return
+	}
+
+	c.JSON(201, gin.H{"data": respond})
 }
 
 // delete post

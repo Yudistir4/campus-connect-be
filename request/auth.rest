@@ -14,8 +14,8 @@ POST http://localhost:8080/users/signin
 content-type: application/json
 
 {
-    "email": "yudistir4maulana@gmail.com",
-    "password": "Dsc2WD"
+    "email": "admin1@mail.com",
+    "password": "123"
 }
 ###
 

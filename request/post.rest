@@ -3,7 +3,7 @@ GET http://localhost:8080/like
 ### GET Saves (fitur sementara)
 GET http://localhost:8080/save
 ### GET POSTS
-GET http://localhost:8080/posts?page=1&limit=30&idUser=1
+GET http://localhost:8080/posts?page=1&limit=30&idUser=2
 
 
 ### GET POSTS (saved)
@@ -35,11 +35,11 @@ POST http://localhost:8080/posts
 content-type: application/json
 
 {
-    "idUser": 1,
-    "materi": "file.png",
-    "caption": "",
+    "idUser": 3,
+    "materi": "dummypost3.jpg",
+    "caption": "Lorem ipsum dolor is amet awaw",
     "isNews": true,
-    "idUserUniversitas":
+    "idUserUniversitas":5
 }
 ### SAVE POST
 POST http://localhost:8080/posts/1/save
