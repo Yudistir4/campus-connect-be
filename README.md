@@ -1,6 +1,9 @@
 ## Description:
 campus connect is a social media platform created specifically for students to make it easier to communicate, collaborate and make it easier to find campus-related information such as scholarships and other events.
 
+### Demo :
+https://campus-connects.netlify.app/
+
 ### Time Taken:
 1 month (Backend + Frontend + design ui)
 
